@@ -1,0 +1,8 @@
+TSSweek = 430;
+CTLconst = 42;
+ATLconst = 7;
+CTLramp = 8;
+TSBlb = -500;
+TSBub = 500;
+CTL0 = 32.7;
+ATL0 = 73.6;

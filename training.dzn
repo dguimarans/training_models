@@ -1,0 +1,9 @@
+Period = 13;
+TSSweek = 650;
+CTLconst = 42;
+ATLconst = 7;
+CTLramp = 0;
+TSBlb = -15.0;
+TSBub = 10.0;
+CTL0 = 70.3;
+ATL0 = 73.1;

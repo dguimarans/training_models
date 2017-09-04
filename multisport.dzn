@@ -1,0 +1,20 @@
+Period = 7;
+
+TSS_period = 650;
+TSSb_period = 650;
+TSSr_period = 650;
+TSSs_period = 650;
+
+CTLconst = 42;
+ATLconst = 7;
+CTLramp = 8;
+
+CTL_0 = 29.7;
+CTLb_0 = 20.5;
+CTLr_0 = 7.0;
+CTLs_0 = 2.2;
+
+ATL_0 = 46.4;
+ATLb_0 = 43.1;
+ATLr_0 = 3.3;
+ATLs_0 = 0.0;

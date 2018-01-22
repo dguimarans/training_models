@@ -9,12 +9,12 @@ CTLconst = 42;
 ATLconst = 7;
 CTLramp = 8;
 
-CTL_0 = 29.7;
+CTL_0 = 35.0;
 CTLb_0 = 20.5;
-CTLr_0 = 7.0;
-CTLs_0 = 2.2;
+CTLr_0 = 7.6;
+CTLs_0 = 6.9;
 
-ATL_0 = 46.4;
-ATLb_0 = 43.1;
-ATLr_0 = 3.3;
-ATLs_0 = 0.0;
+ATL_0 = 48;
+ATLb_0 = 26.2;
+ATLr_0 = 12.3;
+ATLs_0 = 9.5;

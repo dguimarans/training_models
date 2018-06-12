@@ -37,11 +37,9 @@ constraint forall(i in 2..Period) (
 constraint forall(i in 1..Period) (
       TSS[i] >= 0 * CTL[i] );
 constraint forall(i in 1..Period) (
-      TSS[i] <= CTL[i] * 2 );
-      
-constraint TSB[Period] > 5;
+      TSS[i] <= CTL[i] * 4 );
 
-constraint TSS[Period] = 0 /\ TSS[4] = 0;
+constraint TSS[2] = 0 /\ TSS[3] = 0 /\ TSS[4] = 0 /\ TSS[5] = 0;
 
 solve :: int_search(TSS,impact,indomain_reverse_split,complete) 
       maximize(CTL[Period]); 

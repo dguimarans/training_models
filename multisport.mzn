@@ -52,9 +52,9 @@ array[1..Period] of var -10.0..15.0: TSBs;
 % constraint forall(i in 1..Period) (
 %       TSBb[i] = CTLb[i] - ATLb[i] );      
                   
-constraint TSBb[1] = CTLb[1] - ATLb_0;
+constraint TSBb[1] = CTLb_0 - ATLb_0;
 constraint forall(i in 2..Period) (
-      TSBb[i] = CTLb[i] - ATLb[i-1] );
+      TSBb[i] = CTLb[i-1] - ATLb[i-1] );
       
 constraint CTLb[1] = TSSb[1] * (1 - exp(-1/CTLconst)) + CTLb_0 * exp(-1/CTLconst);
 constraint forall(i in 2..Period) (
@@ -79,9 +79,9 @@ constraint forall(i in 1..Period) (
 % constraint forall(i in 1..Period) (
 %       TSBr[i] = CTLr[i] - ATLr[i] );
 
-constraint TSBr[1] = CTLr[1] - ATLr_0;
+constraint TSBr[1] = CTLr_0 - ATLr_0;
 constraint forall(i in 2..Period) (
-      TSBr[i] = CTLr[i] - ATLr[i-1] );
+      TSBr[i] = CTLr[i-1] - ATLr[i-1] );
       
 constraint CTLr[1] = TSSr[1] * (1 - exp(-1/CTLconst)) + CTLr_0 * exp(-1/CTLconst);
 constraint forall(i in 2..Period) (
@@ -106,9 +106,9 @@ constraint forall(i in 1..Period) (
 % constraint forall(i in 1..Period) (
 %       TSBs[i] = CTLs[i] - ATLs[i] );
 
-constraint TSBs[1] = CTLs[1] - ATLs_0;
+constraint TSBs[1] = CTLs_0 - ATLs_0;
 constraint forall(i in 2..Period) (
-      TSBs[i] = CTLs[i] - ATLs[i-1] );
+      TSBs[i] = CTLs[i-1] - ATLs[i-1] );
       
 constraint CTLs[1] = TSSs[1] * (1 - exp(-1/CTLconst)) + CTLs_0 * exp(-1/CTLconst);
 constraint forall(i in 2..Period) (
@@ -152,9 +152,9 @@ constraint forall(i in 1..Period) (
 % constraint forall(i in 1..Period) (
 %       TSB[i] = CTL[i] - ATL[i] );
 
-constraint TSB[1] = CTL[1] - ATL_0;
+constraint TSB[1] = CTL_0 - ATL_0;
 constraint forall(i in 2..Period) (
-      TSB[i] = CTL[i] - ATL[i-1] );
+      TSB[i] = CTL[i-1] - ATL[i-1] );
       
 constraint CTL[1] = TSS[1] * (1 - exp(-1/CTLconst)) + CTL_0 * exp(-1/CTLconst);
 constraint forall(i in 2..Period) (
@@ -174,17 +174,13 @@ constraint forall(i in 1..Period) (
 
 %% Constraints for planning purposes (structured week)
 % Week 1
-constraint TSSb[1] = 0 /\ TSSb[2] = 0 /\ TSSb[3] > 0 /\ TSSb[4] > 0 /\ TSSb[5] > 0 /\ TSSb[6] = 0 /\ TSSb[7] = 0;
-constraint TSSr[1] = 0 /\ TSSr[2] = 0 /\ TSSr[3] = 0 /\ TSSr[4] > 0 /\ TSSr[5] = 0 /\ TSSr[6] = 0 /\ TSSr[7] > 0;
-constraint TSSs[1] = 0 /\ TSSs[2] > 0 /\ TSSs[3] > 0 /\ TSSs[4] = 0 /\ TSSs[5] > 0 /\ TSSs[6] = 0 /\ TSSs[7] = 0;
+constraint TSSb[1] > 0 /\ TSSb[2] > 0 /\ TSSb[3] = 0 /\ TSSb[4] > 0 /\ TSSb[5] > 0 /\ TSSb[6] = 0 /\ TSSb[7] = 0;
+constraint TSSr[1] = 0 /\ TSSr[2] = 0 /\ TSSr[3] = 0 /\ TSSr[4] = 0 /\ TSSr[5] = 0 /\ TSSr[6] = 0 /\ TSSr[7] > 0;
+constraint TSSs[1] = 0 /\ TSSs[2] > 0 /\ TSSs[3] > 0 /\ TSSs[4] > 0 /\ TSSs[5] > 0 /\ TSSs[6] = 0 /\ TSSs[7] = 0;
 % Week 2
 constraint TSSb[8] > 0 /\ TSSb[9] = 0 /\ TSSb[10] > 0 /\ TSSb[11] = 0 /\ TSSb[12] > 0 /\ TSSb[13] = 0 /\ TSSb[14] = 0;
 constraint TSSr[8] = 0 /\ TSSr[9] > 0 /\ TSSr[10] = 0 /\ TSSr[11] > 0 /\ TSSr[12] = 0 /\ TSSr[13] = 0 /\ TSSr[14] > 0;
-constraint TSSs[8] = 0 /\ TSSs[9] > 0 /\ TSSs[10] = 0 /\ TSSs[11] > 0 /\ TSSs[12] > 0 /\ TSSs[13] = 0 /\ TSSs[14] = 0;
-% Week 3
-constraint TSSb[15] > 0 /\ TSSb[16] = 0 /\ TSSb[17] > 0 /\ TSSb[18] = 0 /\ TSSb[19] > 0 /\ TSSb[20] = 0 /\ TSSb[21] = 0;
-constraint TSSr[15] = 0 /\ TSSr[16] > 0 /\ TSSr[17] = 0 /\ TSSr[18] > 0 /\ TSSr[19] = 0 /\ TSSr[20] = 0 /\ TSSr[21] > 0;
-constraint TSSs[15] > 0 /\ TSSs[16] > 0 /\ TSSs[17] = 0 /\ TSSs[18] > 0 /\ TSSs[19] > 0 /\ TSSs[20] = 0 /\ TSSs[21] = 0;
+constraint TSSs[8] > 0 /\ TSSs[9] > 0 /\ TSSs[10] = 0 /\ TSSs[11] > 0 /\ TSSs[12] > 0 /\ TSSs[13] = 0 /\ TSSs[14] = 0;
      
 
 solve :: int_search(TSS,impact,indomain_reverse_split,complete) 

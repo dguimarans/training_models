@@ -1,4 +1,4 @@
-Period = 14;
+Period = 28;
 
 TSS_period = 650;
 TSSb_period = 650;
@@ -9,12 +9,12 @@ CTLconst = 42;
 ATLconst = 7;
 CTLramp = 4;
 
-CTL_0 = 50;
+CTL_0 = 42;
 CTLb_0 = 28;
-CTLr_0 = 10;
-CTLs_0 = 12;
+CTLr_0 = 8;
+CTLs_0 = 6;
 
-ATL_0 = 48;
-ATLb_0 = 20;
-ATLr_0 = 13;
-ATLs_0 = 15;
+ATL_0 = 47;
+ATLb_0 = 40;
+ATLr_0 = 2;
+ATLs_0 = 5;

@@ -12,15 +12,19 @@ int: Period;
 set of int: DAYS = 1..Period;
 array[SPORTS,DAYS] of 0..1: availability;
 
+% Parameters and variables for 80%-20% planning
+float: IF_80;
+float: IF_20;
+array[DAYS] of 0.0..24.0: available_time;
+array[SPORTS,DAYS] of var 0.0..24.0: t_80;  
+array[SPORTS,DAYS] of var 0.0..24.0: t_20;
+
 % Initial status
 array[SPORTS] of float: CTL_0;
 array[SPORTS] of float: ATL_0;
 
 % We calculate an upper bound on the training stress for the whole period
 float: TSS_period = (sum(CTL_0) + CTLramp * (Period div 7 - 1)) * 2 * Period;
-% int: TSSb_period;
-% int: TSSr_period;
-% int: TSSs_period;
 
 % Variables of the problem
 array[SPORTS,DAYS] of var 0..TSS_period: TSS;
@@ -124,196 +128,25 @@ constraint forall(i in DAYS) (
               TSSoverall[i] <= CTLoverall[i] * 2 
            );           
 
+% Constraints for planning a 80%-20% time distribution
+constraint forall(i in DAYS) (
+              sum([t_80[j,i] | j in SPORTS]) + sum([t_20[j,i] | j in SPORTS]) <= available_time[i]
+           );
+           
+constraint forall(sport in SPORTS) (
+              forall(i in DAYS) (
+                 TSS[sport,i] = (IF_80 * IF_80 * t_80[sport,i] + IF_20 * IF_20 * t_20[sport,i]) * 100
+              )
+           );     
+           
+constraint sum(t_80) = 0.8 * (sum(t_80) + sum(t_20));
 
-% float: CTL_0;
-% float: CTLb_0;
-% float: CTLr_0;
-% float: CTLs_0;
-
-% float: ATL_0;
-% float: ATLb_0;
-% float: ATLr_0;
-% float: ATLs_0;
-
-% array[1..Period] of var 0..TSS_period: TSS;
-% array[1..Period] of var 0..TSS_period: TSSb;
-% array[1..Period] of var 0..TSS_period: TSSr;
-% array[1..Period] of var 0..TSS_period: TSSs;
-
-% array[1..Period] of var 0..200.0: CTL;
-% array[1..Period] of var 0..200.0: CTLb;
-% array[1..Period] of var 0..200.0: CTLr;
-% array[1..Period] of var 0..200.0: CTLs;
-
-% array[1..Period] of var 0..200.0: ATL;
-% array[1..Period] of var 0..200.0: ATLb;
-% array[1..Period] of var 0..200.0: ATLr;
-% array[1..Period] of var 0..200.0: ATLs;
-
-%% We limit fitness/fatigue levels by definition of domains for form. 
-% array[1..Period] of var -20.0..15.0: TSB;
-% array[1..Period] of var -20.0..15.0: TSBb;
-% array[1..Period] of var -20.0..15.0: TSBr;
-% array[1..Period] of var -20.0..15.0: TSBs;
-
-% array[int] of int: bike_availability;
-% array[1..Period] of int: run_availability;
-% array[1..Period] of int: swim_availability;
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Cycling model
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% constraint sum(TSSb) = TSSb_period;
-
-% constraint CTLb[Period] - CTLb_0 <= CTLramp;
-
-% constraint forall(i in 1..Period) (
-%       TSBb[i] = CTLb[i] - ATLb[i] );      
-                  
-% constraint TSBb[1] = CTLb_0 - ATLb_0;
-% constraint forall(i in 2..Period) (
-%       TSBb[i] = CTLb[i-1] - ATLb[i-1] );
-      
-% constraint CTLb[1] = TSSb[1] * (1 - exp(-1/CTLconst)) + CTLb_0 * exp(-1/CTLconst);
-% constraint forall(i in 2..Period) (
-%       CTLb[i] = TSSb[i] * (1 - exp(-1/CTLconst)) + CTLb[i-1] * exp(-1/CTLconst) );
-        
-% constraint ATLb[1] = TSSb[1] * (1 - exp(-1/ATLconst)) + ATLb_0 * exp(-1/ATLconst);
-% constraint forall(i in 2..Period) (
-%       ATLb[i] = TSSb[i] * (1 - exp(-1/ATLconst)) + ATLb[i-1] * exp(-1/ATLconst) );
-      
-% constraint forall(i in 1..Period) (
-%       TSSb[i] >= 0 /\ TSSb[i] <= CTLb[i] * 4 );
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Running model
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% constraint sum(TSSr) = TSSr_period;
-
-% constraint CTLr[Period] - CTLr_0 <= CTLramp;
-      
-% constraint forall(i in 1..Period) (
-%       TSBr[i] = CTLr[i] - ATLr[i] );
-
-% constraint TSBr[1] = CTLr_0 - ATLr_0;
-% constraint forall(i in 2..Period) (
-%       TSBr[i] = CTLr[i-1] - ATLr[i-1] );
-      
-% constraint CTLr[1] = TSSr[1] * (1 - exp(-1/CTLconst)) + CTLr_0 * exp(-1/CTLconst);
-% constraint forall(i in 2..Period) (
-%       CTLr[i] = TSSr[i] * (1 - exp(-1/CTLconst)) + CTLr[i-1] * exp(-1/CTLconst) );
-        
-% constraint ATLr[1] = TSSr[1] * (1 - exp(-1/ATLconst)) + ATLr_0 * exp(-1/ATLconst);
-% constraint forall(i in 2..Period) (
-%       ATLr[i] = TSSr[i] * (1 - exp(-1/ATLconst)) + ATLr[i-1] * exp(-1/ATLconst) );
-      
-% constraint forall(i in 1..Period) (
-%       TSSr[i] >= 0 /\ TSSr[i] <= CTLr[i] * 4 );
-      
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Swimming model
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% constraint sum(TSSs) = TSSs_period;
-
-% constraint CTLs[Period] - CTLs_0 <= CTLramp;
-      
-% constraint forall(i in 1..Period) (
-%       TSBs[i] = CTLs[i] - ATLs[i] );
-
-% constraint TSBs[1] = CTLs_0 - ATLs_0;
-% constraint forall(i in 2..Period) (
-%       TSBs[i] = CTLs[i-1] - ATLs[i-1] );
-      
-% constraint CTLs[1] = TSSs[1] * (1 - exp(-1/CTLconst)) + CTLs_0 * exp(-1/CTLconst);
-% constraint forall(i in 2..Period) (
-%       CTLs[i] = TSSs[i] * (1 - exp(-1/CTLconst)) + CTLs[i-1] * exp(-1/CTLconst) );
-        
-% constraint ATLs[1] = TSSs[1] * (1 - exp(-1/ATLconst)) + ATLs_0 * exp(-1/ATLconst);
-% constraint forall(i in 2..Period) (
-%       ATLs[i] = TSSs[i] * (1 - exp(-1/ATLconst)) + ATLs[i-1] * exp(-1/ATLconst) );
-      
-% constraint forall(i in 1..Period) (
-%       TSSs[i] >= 0 /\ TSSs[i] <= CTLs[i] * 4 );
-
-% constraint forall(i in 1..Period) (
-%       TSSs[i] >= 22.0 );
-
-% constraint forall(i in 1..Period) (
-%       TSSs[i] = 0 \/ TSSs[i] >= 22 );
-% constraint forall(i in 1..Period) (
-%       TSSs[i] <= 44 );
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Overall model
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% constraint sum(TSS) = TSS_period;
-
-% constraint sum(TSS) = sum(TSSb) + sum(TSSr) + sum(TSSs);
-
-% constraint forall(i in 1..Period) (
-%       TSS[i] = TSSb[i] + TSSr[i] + TSSs[i] );
-
-% constraint forall(i in 1..Period) (
-%       CTL[i] = CTLb[i] + CTLr[i] + CTLs[i] );
-      
-% % constraint CTL[Period] - CTL_0 <= CTLramp;
-% % constraint forall(i in 1..Period) (
-% %       CTL[i] <= CTL_0 + CTLramp );
-% constraint CTL[7] - CTL_0 <= CTLramp;
-% constraint forall(i in 8..Period) (
-%       CTL[i] - CTL[i - 7] <= CTLramp );
-
-% constraint forall(i in 1..Period) (
-%       ATL[i] = ATLb[i] + ATLr[i] + ATLs[i] );
-
-% constraint TSB[1] = CTL_0 - ATL_0;
-% constraint forall(i in 2..Period) (
-%       TSB[i] = CTL[i-1] - ATL[i-1] );
-      
-% constraint CTL[1] = TSS[1] * (1 - exp(-1/CTLconst)) + CTL_0 * exp(-1/CTLconst);
-% constraint forall(i in 2..Period) (
-%       CTL[i] = TSS[i] * (1 - exp(-1/CTLconst)) + CTL[i-1] * exp(-1/CTLconst) );
-        
-% constraint ATL[1] = TSS[1] * (1 - exp(-1/ATLconst)) + ATL_0 * exp(-1/ATLconst);
-% constraint forall(i in 2..Period) (
-%       ATL[i] = TSS[i] * (1 - exp(-1/ATLconst)) + ATL[i-1] * exp(-1/ATLconst) );
-      
-% constraint forall(i in 1..Period) (
-%       TSS[i] >= 0 /\ TSS[i] <= CTL[i] * 2 );
-
-
-% %% Constraints for planning purposes (structured week)
-% constraint forall(i in 1..Period) (
-%       if bike_availability[i] > 0 then
-%           TSSb[i] >= 0
-%       else
-%           TSSb[i] = 0
-%       endif
-%       );
-% constraint forall(i in 1..Period) (
-%       if run_availability[i] > 0 then
-%           TSSr[i] >= 0
-%       else
-%           TSSr[i] = 0
-%       endif
-%       );
-% constraint forall(i in 1..Period) (      
-%       if swim_availability[i] > 0 then
-%           TSSs[i] >= 0
-%       else
-%           TSSs[i] = 0
-%       endif
-%       );
-
-% constraint sum(i in (Period - 7)..Period) (TSS[i]) = CTL[Period - 7] * 7;
+constraint forall(sport in SPORTS) (
+              forall(i in DAYS) (
+                 if t_20[sport,i] > 0 then t_80[sport,i] >= 0.15 endif
+              )
+           );
+                 
 
 
 solve %:: int_search(TSSoverall,impact,indomain_reverse_split,complete) 
@@ -325,8 +158,9 @@ solve %:: int_search(TSSoverall,impact,indomain_reverse_split,complete)
 %       minimize(sum(ATL) / Period);
 %       maximize(sum(TSB) / Period);
 
-output ["Day,Sport,TSS,CTL,ATL,TSB,TSSo,CTLo,ATLo,TSBo\n"] ++
+output ["Day,Sport,t80,t20,TSS,CTL,ATL,TSB,TSSo,CTLo,ATLo,TSBo\n"] ++
         [show(i) ++ "," ++ show(sport_names[s]) ++ "," ++
+        show_float(8,0,t_80[s,i] * 60) ++ "," ++ show_float(8,0,t_20[s,i] * 60) ++ "," ++
         show_float(8,2,TSS[s,i]) ++ "," ++ show_float(8,2,CTL[s,i]) ++ "," ++ show_float(8,2,ATL[s,i]) ++ "," ++ show_float(8,2,TSB[s,i]) ++ "," ++
         show_float(8,2,TSSoverall[i]) ++ "," ++ show_float(8,2,CTLoverall[i]) ++ "," ++ show_float(8,2,ATLoverall[i]) ++ "," ++ show_float(8,2,TSBoverall[i]) ++ "\n"  
         | i in 1..Period, s in SPORTS];

@@ -2,6 +2,7 @@
 int: CTLconst;
 int: ATLconst;
 float: CTLramp;
+float: TSBlb;
 
 % Sports specification
 array[int] of string: sport_names;
@@ -35,7 +36,7 @@ array[SPORTS,DAYS] of var -20.0..10.0: TSB;
 array[DAYS] of var 0..TSS_period: TSSoverall;
 array[DAYS] of var 0..(sum(CTL_0) * CTLramp * (Period div 7)): CTLoverall;
 array[DAYS] of var float: ATLoverall;
-array[DAYS] of var -20.0..10.0: TSBoverall;
+array[DAYS] of var -TSBlb..10.0: TSBoverall;
 
 
 % Constraints per sport
@@ -141,10 +142,16 @@ constraint forall(sport in SPORTS) (
            
 constraint sum(t_80) = 0.8 * (sum(t_80) + sum(t_20));
 
+% Constraint to ensure warm up time is always included on hard days.
 constraint forall(sport in SPORTS) (
               forall(i in DAYS) (
                  if t_20[sport,i] > 0 then t_80[sport,i] >= 0.15 endif
               )
+           );
+      
+% Constraint to try and limit the hard sessions to days where recovery is high     
+constraint forall(i in DAYS) (
+              sum(sport in SPORTS) (t_20[sport,i]) <= (TSBoverall[i] + TSBlb) / 60
            );
                  
 
